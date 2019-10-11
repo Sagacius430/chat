@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 /**
- * @author Lincoln
+ * @author Lincoln & Carlos
  */
 public class Cliente {
     public static void main(String[] args) {
