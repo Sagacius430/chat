@@ -17,11 +17,12 @@ public class Servidor {
         try {
             System.out.println("Iniciando o servidor");
             servidor = new ServerSocket(12345);
-            System.out.println("Servidor iniciado");
+            System.out.println("Servidor online");
             
             //O servidor vai ficar recebendo clientes
             while(true){
-                System.out.println("Servidor conectando ao cliente");
+                System.out.println("Servidor esperando clientes...");
+                //O accept espera um cliente conectar, assim vem um socket para o servidor
                 Socket cliente = servidor.accept();
                 //Criando um novo cliente
                 new GerenciadorDeClientesThread(cliente);

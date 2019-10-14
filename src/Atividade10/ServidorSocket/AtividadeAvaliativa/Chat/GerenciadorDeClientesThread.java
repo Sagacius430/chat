@@ -22,25 +22,26 @@ public class GerenciadorDeClientesThread extends Thread {
     //ArrayList<GerenciadorDeClientesThread> clientes = new ArrayList<>(); 
     private static final Map<String,GerenciadorDeClientesThread> clientes = new HashMap<String,GerenciadorDeClientesThread>();
 
+    //Recebendo um cliente para cada gerenciador de cliente
     public GerenciadorDeClientesThread(Socket cliente) {
         this.cliente = cliente;
         start();
     }
 
-    @Override
+    @Override    
     public void run() {
 
         try {
             //O InputStream receber do cliente um pacote de dados em bytes.
             //O BufferedReader lê os bytes e converte em String.
-            leitor = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
+            BufferedReader leitor = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
             //Falar com o cliente mandando mensagem pra fora. O true manda o println para o cliente de forma automático.
-            escrever = new PrintWriter(cliente.getOutputStream(), true);
+            PrintWriter escrever = new PrintWriter(cliente.getOutputStream(), true);
             escrever.println("Qual o seu nome? ");
-            //O que o for escrito pelo cliente é guardado em mensagem.
+            //O que o fo r escrito pelo cliente é guardado em mensagem.
             String mensagem = leitor.readLine();
             //Guarda o nome digitado
-            this.nomeCliente = mensagem;
+            this.nomeCliente = mensagem.toLowerCase();
             escrever.println("E aí?" + this.nomeCliente);
             //Colocar no mapa o próprio cliente.
             clientes.put(this.nomeCliente, this);
@@ -61,11 +62,11 @@ public class GerenciadorDeClientesThread extends Thread {
                         destinatario.getEscrever().println(this.nomeCliente + " disse " + mensagem);
                     }
                     //Listar todos os clientes
-                }if(mensagem.equals("lista_usuariios")){
+                }if(mensagem.equals("lista_usuarios")){
                     StringBuffer str = new StringBuffer();
                             for(String c: clientes.keySet()){
                                 str.append(c);
-                                str.append("  ");
+                                str.append(", ");
                             }
                             escrever.println(str.toString());
                 }else {
