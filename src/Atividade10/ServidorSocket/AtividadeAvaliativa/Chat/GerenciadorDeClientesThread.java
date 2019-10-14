@@ -34,35 +34,49 @@ public class GerenciadorDeClientesThread extends Thread {
         try {
             //O InputStream receber do cliente um pacote de dados em bytes.
             //O BufferedReader lê os bytes e converte em String.
-            BufferedReader leitor = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
+            leitor = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
             //Falar com o cliente mandando mensagem pra fora. O true manda o println para o cliente de forma automático.
-            PrintWriter escrever = new PrintWriter(cliente.getOutputStream(), true);
+            escrever = new PrintWriter(cliente.getOutputStream(), true);
+            //Cliente logando
             escrever.println("Qual o seu nome? ");
             //O que o fo r escrito pelo cliente é guardado em mensagem.
             String mensagem = leitor.readLine();
             //Guarda o nome digitado
             this.nomeCliente = mensagem.toLowerCase();
-            escrever.println("E aí?" + this.nomeCliente);
+            escrever.println("E aí? " + this.nomeCliente);
             //Colocar no mapa o próprio cliente.
             clientes.put(this.nomeCliente, this);
 
             //Teste para conversar com o servidor
             while (true) {
                 mensagem = leitor.readLine();
-                if (mensagem.equalsIgnoreCase("SAIR")) {
+                if (mensagem.equalsIgnoreCase("sair:")) {
                     this.cliente.close();
-                } else if (mensagem.startsWith("mensagem:destinatário:")) {
-                    String nomeDestinatario = mensagem.substring(21, mensagem.length());
+                }//else if(mensagem.startsWith("login:")){  
+                //  escrever um código que
+                //  inicia novo cliente com o nome digitado
+                //}else if(mensagem.startsWith("transmitir:remetente:")){
+                //Inserir 
+                //} 
+                //startsWith verifica se a string inicia com essa palavra
+                else if (mensagem.toLowerCase().startsWith("mensagem:destinatario:")) {
+                    String nomeDestinatario = mensagem.substring(22, mensagem.length());
                     System.out.println("enviando para " + nomeDestinatario);
                     GerenciadorDeClientesThread destinatario = clientes.get(nomeDestinatario);
                     
                     if (destinatario == null) {
                         escrever.println("Cliente não existe");
                     } else {
-                        destinatario.getEscrever().println(this.nomeCliente + " disse " + mensagem);
+                        escrever.println("Digite uma mensagem para " + destinatario.getNomeCliente());
+                        destinatario.getEscrever().println(this.nomeCliente + " disse " + leitor.readLine());
                     }
-                    //Listar todos os clientes
-                }if(mensagem.equals("lista_usuarios")){
+                    
+
+                 }else if(mensagem.equals("tranmitir:remetente:destinatario:")){
+                     escrever.println(this.nomeCliente + " disse: " + mensagem+" para "+nomeCliente);
+                 }
+                //Listar todos os clientes                
+                else if(mensagem.equals("lista_usuarios")){
                     StringBuffer str = new StringBuffer();
                             for(String c: clientes.keySet()){
                                 str.append(c);
@@ -80,12 +94,17 @@ public class GerenciadorDeClientesThread extends Thread {
         }
     }
 
-    public BufferedReader getLeitor() {
-        return leitor;
-    }
+//    public BufferedReader getLeitor() {
+//        return leitor;
+//    }
 
     public PrintWriter getEscrever() {
         return escrever;
     }
 
+    public String getNomeCliente() {
+        return nomeCliente;
+    }
+
+    
 }

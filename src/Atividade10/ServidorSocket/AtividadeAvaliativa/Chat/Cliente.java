@@ -13,7 +13,7 @@ public class Cliente {
     public static void main(String[] args) {
         try {
             //O socket se conectará ao servidor com IP e porta
-            final Socket cliente = new Socket("192.168.56.1",12345);
+            final Socket cliente = new Socket("192.168.56.1",2424);
             
             //Falar e ouvir ao mesmo tempo usando uma nova thread
             new Thread(){

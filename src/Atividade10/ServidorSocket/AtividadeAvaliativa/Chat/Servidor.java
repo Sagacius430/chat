@@ -16,7 +16,7 @@ public class Servidor {
         
         try {
             System.out.println("Iniciando o servidor");
-            servidor = new ServerSocket(12345);
+            servidor = new ServerSocket(2424);
             System.out.println("Servidor online");
             
             //O servidor vai ficar recebendo clientes
