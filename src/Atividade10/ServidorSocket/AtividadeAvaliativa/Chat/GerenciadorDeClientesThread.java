@@ -20,7 +20,7 @@ public class GerenciadorDeClientesThread extends Thread {
     private PrintWriter escrever;
     //Lista dos Clientes, Chave valor (chave:Nome digitado pelo cliente)(valor:gerenciador)
     //ArrayList<GerenciadorDeClientesThread> clientes = new ArrayList<>(); 
-    private static final Map<String,GerenciadorDeClientesThread> clientes = new HashMap<String,GerenciadorDeClientesThread>();
+    private static final Map<String, GerenciadorDeClientesThread> clientes = new HashMap<String, GerenciadorDeClientesThread>();
 
     //Recebendo um cliente para cada gerenciador de cliente
     public GerenciadorDeClientesThread(Socket cliente) {
@@ -28,7 +28,7 @@ public class GerenciadorDeClientesThread extends Thread {
         start();
     }
 
-    @Override    
+    @Override
     public void run() {
 
         try {
@@ -41,6 +41,13 @@ public class GerenciadorDeClientesThread extends Thread {
             escrever.println("Qual o seu nome? ");
             //O que o fo r escrito pelo cliente é guardado em mensagem.
             String mensagem = leitor.readLine();
+            StringBuffer buscarNome = new StringBuffer();
+            for (String c : clientes.keySet()) {
+                buscarNome.append(c);
+                if(buscarNome.equals(mensagem)){
+                    escrever.println("Nome já existe, digite outro nome");
+                }                    
+            }
             //Guarda o nome digitado
             this.nomeCliente = mensagem.toLowerCase();
             escrever.println("E aí? " + this.nomeCliente);
@@ -50,12 +57,19 @@ public class GerenciadorDeClientesThread extends Thread {
             //Teste para conversar com o servidor
             while (true) {
                 mensagem = leitor.readLine();
+
                 if (mensagem.equalsIgnoreCase("sair:")) {
                     this.cliente.close();
-                }//else if(mensagem.startsWith("login:")){  
+                } else if (mensagem.startsWith("login:")) {                    
                 //  escrever um código que
                 //  inicia novo cliente com o nome digitado
-                //}else if(mensagem.startsWith("transmitir:remetente:")){
+                    String nomeNovo = mensagem.substring(6, mensagem.length());
+                    //escrever um código que passa novoNome para nova thead Gerenciador
+                    new GerenciadorDeClientesThread(cliente);
+                    //mensagem = leitor.readLine();
+                    //this.nomeCliente = mensagem.toLowerCase();
+                    //clientes.put(this.nomeCliente, this);
+                } //else if(mensagem.startsWith("transmitir:remetente:")){
                 //Inserir 
                 //} 
                 //startsWith verifica se a string inicia com essa palavra
@@ -63,27 +77,25 @@ public class GerenciadorDeClientesThread extends Thread {
                     String nomeDestinatario = mensagem.substring(22, mensagem.length());
                     System.out.println("enviando para " + nomeDestinatario);
                     GerenciadorDeClientesThread destinatario = clientes.get(nomeDestinatario);
-                    
+
                     if (destinatario == null) {
                         escrever.println("Cliente não existe");
                     } else {
                         escrever.println("Digite uma mensagem para " + destinatario.getNomeCliente());
                         destinatario.getEscrever().println(this.nomeCliente + " disse " + leitor.readLine());
                     }
-                    
 
-                 }else if(mensagem.equals("tranmitir:remetente:destinatario:")){
-                     escrever.println(this.nomeCliente + " disse: " + mensagem+" para "+nomeCliente);
-                 }
-                //Listar todos os clientes                
-                else if(mensagem.equals("lista_usuarios")){
+                } else if (mensagem.equals("transmitir:remetente:destinatario:")) {
+                    escrever.println(this.nomeCliente + " disse: " + mensagem + " para " + nomeCliente);
+                } //Listar todos os clientes                
+                else if (mensagem.equals("lista_usuarios")) {
                     StringBuffer str = new StringBuffer();
-                            for(String c: clientes.keySet()){
-                                str.append(c);
-                                str.append(", ");
-                            }
-                            escrever.println(str.toString());
-                }else {
+                    for (String c : clientes.keySet()) {
+                        str.append(c);
+                        str.append(", ");
+                    }
+                    escrever.println(str.toString());
+                } else {
                     escrever.println(this.nomeCliente + " Você disse: " + mensagem);
                 }
             }
@@ -97,7 +109,6 @@ public class GerenciadorDeClientesThread extends Thread {
 //    public BufferedReader getLeitor() {
 //        return leitor;
 //    }
-
     public PrintWriter getEscrever() {
         return escrever;
     }
@@ -106,5 +117,4 @@ public class GerenciadorDeClientesThread extends Thread {
         return nomeCliente;
     }
 
-    
 }
