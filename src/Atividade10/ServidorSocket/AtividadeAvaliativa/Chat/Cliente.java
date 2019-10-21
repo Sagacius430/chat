@@ -25,7 +25,7 @@ public class Cliente {
                         
                         while(true){
                             String mensagem = leitor.readLine();
-                            System.out.println("O servidor disse: "+mensagem);
+                            System.out.println("Transitir: "+mensagem);
                         }
                         
                     } catch (IOException e) {
