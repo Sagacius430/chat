@@ -1,4 +1,4 @@
-package Atividade10.ServidorSocket.AtividadeAvaliativa.Chat;
+package chat;
 
 import java.io.IOException;
 import java.net.ServerSocket;
