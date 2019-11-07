@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +41,7 @@ public class GerenciadorDeClientesThread extends Thread {
 //****************************sair*********************************************
                 if (mensagem.equalsIgnoreCase("sair:")) {
                     this.cliente.close();
+                    listarUsuarios();
 //****************************login********************************************
                 } else if (mensagem.startsWith("login:")) {
                     //  escrever um código que
@@ -57,7 +60,7 @@ public class GerenciadorDeClientesThread extends Thread {
                             escrever.println("O nome de usuário foi registrado com sucesso");
                             escrever.println(login);
                         }
-                    }                    
+                    }
                     //mensagem = leitor.readLine();
                     //this.nomeCliente = mensagem.toLowerCase();
                     //clientes.put(this.nomeCliente, this);
@@ -69,27 +72,36 @@ public class GerenciadorDeClientesThread extends Thread {
                 else if (mensagem.toLowerCase().startsWith("mensagem:")) {
                     String nomeEMensagem = mensagem.substring(9, mensagem.length());
                     //Dividindo o texto digitado pelo dois pontos (:)
-                    String array[] = new String[10];
-                        //Verificar como dividir o que o usuário digitou e pegar o ponto e virgula
-                        //para identificar quais usuários receberão a mensagem.
-                        if(nomeEMensagem.equalsIgnoreCase(";")){
-                            array = nomeEMensagem.split(";");
-                            //dividir os nomes digitados em um array para enviar mensagem para a lista do usuário
-                        }
-                    
+                    String array[] = new String[2];
+                    String arrayNomes[] = new String[10];
                     array = nomeEMensagem.split(":");
-                    //Guardando o nome na posição zero e a posição 1 recebe o texto
-                    String nomeDestinatario = array[0];
+                    String nomes = array[0];
+                    //Se a posição 0, que tem o nome, tiver mais nomes separados por ";"
+                    //divide os nomes por ";" e coloca no arraynomes
+                    if (nomes.equalsIgnoreCase(";")) {
+                        //Guardando os nomes no arrayNomes
+                        arrayNomes = nomes.split(";");
+                        for (String n : arrayNomes) {
+                            GerenciadorDeClientesThread destinatarios = clientes.get(n);   
+                            destinatarios.getEscrever().println("Transmitir: " + this.nomeCliente + " disse"+ " : " + array[1]);
+                        }                        
+//                        String nomesDestinatarios = Arrays.toString(arrayNomes);                        
+                        escrever.println("enviando para " + Arrays.toString(arrayNomes)+".");
 
-                    GerenciadorDeClientesThread destinatario = clientes.get(nomeDestinatario);
-                    escrever.println("enviando para " + nomeDestinatario);
-
-                    if (destinatario == null) {
-                        escrever.println("Cliente não existe");
                     } else {
+                        //Guardando o nome na posição zero e a posição 1 recebe o texto
+                        String nomeDestinatario = array[0];
+
+                        GerenciadorDeClientesThread destinatario = clientes.get(nomeDestinatario);
+                        escrever.println("enviando para " + nomeDestinatario);
+                        
+                        if (destinatario == null) {
+                            escrever.println("Cliente não existe");
+                        } else {
 //                        escrever.println(array[1]);
 //                        escrever.println("Digite uma mensagem para " + destinatario.getNomeCliente());
-                        destinatario.getEscrever().println("Transmitir: "+this.nomeCliente + " disse"/*+ destinatario.getNomeCliente() */+" : "+ array[1]);
+                            destinatario.getEscrever().println("Transmitir: " + this.nomeCliente + " disse"/*+ destinatario.getNomeCliente() */ + " : " + array[1]);
+                        }
                     }
 
                 } //******************************transmitir*************************************
@@ -106,9 +118,10 @@ public class GerenciadorDeClientesThread extends Thread {
 //                        str.append(", ");
 //                    }
 //                    escrever.println(str.toString());
-                } else {
-                    escrever.println(this.nomeCliente + " Você disse: " + mensagem);
-                }
+                } 
+//                    else {
+//                    escrever.println(this.nomeCliente + " Você disse: " + mensagem);
+//                }
             }
 
         } catch (IOException e) {
@@ -118,6 +131,7 @@ public class GerenciadorDeClientesThread extends Thread {
     }
 
     public void listarUsuarios() {
+        //StringBuffer é mais rápida que a String
         StringBuffer str = new StringBuffer();
         for (String c : clientes.keySet()) {
             str.append(c);
@@ -131,27 +145,27 @@ public class GerenciadorDeClientesThread extends Thread {
         //O InputStream receber do cliente um pacote de dados em bytes.
         //O BufferedReader lê os bytes e converte em String.
         leitor = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
-        //Falar com o cliente mandando mensagem pra fora. O true manda o println para o cliente de forma automático.
+        //Falar com o cliente mandando mensagem pra fora. O true manda o println para o cliente de forma automática.
         escrever = new PrintWriter(cliente.getOutputStream(), true);
         //Cliente logando
         escrever.println("login:");
 //        System.out.println("Qual o seu nome? ");
-        //O que o fo r escrito pelo cliente é guardado em mensagem.
+        //O que o for escrito pelo cliente é guardado em mensagem.
         mensagem = leitor.readLine();
         StringBuffer buscarNome = new StringBuffer();
         for (String c : clientes.keySet()) {
             buscarNome.append(c);
-            boolean confirmacaoDeUsuario = false;
             
-            //corrigir teste falso
-            if (buscarNome.equals(mensagem)) {
-                
-                escrever.println("login:"+ confirmacaoDeUsuario );
-            }else{                
+            //verificar isso até...
+                boolean confirmacaoDeUsuario = false;            
+                //corrigir teste falso
+                if (buscarNome.equals(mensagem)) {
+                    escrever.println("login:" + confirmacaoDeUsuario);
+                } else {
                 confirmacaoDeUsuario = true;
-                escrever.println("login:"+ confirmacaoDeUsuario );
-                
-            }
+                escrever.println("login:" + confirmacaoDeUsuario);
+                }
+            //aqui...
         }
         //Guarda o nome digitado
         this.nomeCliente = mensagem.toLowerCase();
