@@ -68,9 +68,17 @@ public class GerenciadorDeClientesThread extends Thread {
                 //startsWith verifica se a string inicia com essa palavra
                 else if (mensagem.toLowerCase().startsWith("mensagem:")) {
                     String nomeEMensagem = mensagem.substring(9, mensagem.length());
-                    //Dividindo o texto digitado pelo doi pontos (:)
-                    String array[] = new String[2];
+                    //Dividindo o texto digitado pelo dois pontos (:)
+                    String array[] = new String[10];
+                        //Verificar como dividir o que o usuário digitou e pegar o ponto e virgula
+                        //para identificar quais usuários receberão a mensagem.
+                        if(nomeEMensagem.equalsIgnoreCase(";")){
+                            array = nomeEMensagem.split(";");
+                            //dividir os nomes digitados em um array para enviar mensagem para a lista do usuário
+                        }
+                    
                     array = nomeEMensagem.split(":");
+                    //Guardando o nome na posição zero e a posição 1 recebe o texto
                     String nomeDestinatario = array[0];
 
                     GerenciadorDeClientesThread destinatario = clientes.get(nomeDestinatario);
@@ -81,7 +89,7 @@ public class GerenciadorDeClientesThread extends Thread {
                     } else {
 //                        escrever.println(array[1]);
 //                        escrever.println("Digite uma mensagem para " + destinatario.getNomeCliente());
-                        destinatario.getEscrever().println(this.nomeCliente + " disse"/*+ destinatario.getNomeCliente() */+" : "+ array[1]);
+                        destinatario.getEscrever().println("Transmitir: "+this.nomeCliente + " disse"/*+ destinatario.getNomeCliente() */+" : "+ array[1]);
                     }
 
                 } //******************************transmitir*************************************

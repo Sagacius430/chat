@@ -3,9 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Lincoln/Documents/NetBeansProjects/ChatV2/src/Atividade10/ServidorSocket/AtividadeAvaliativa/Chat/GerenciadorDeClientesThread.java</file>
-            <file>file:/C:/Users/Lincoln/Documents/NetBeansProjects/ChatV2/src/Atividade10/ServidorSocket/AtividadeAvaliativa/Chat/Servidor.java</file>
-            <file>file:/C:/Users/Lincoln/Documents/NetBeansProjects/ChatV2/src/Atividade10/ServidorSocket/AtividadeAvaliativa/Chat/Cliente.java</file>
+            <file>file:/C:/Users/Lincoln/Documents/NetBeansProjects/Chat/src/chat/GerenciadorDeClientesThread.java</file>
+            <file>file:/C:/Users/Lincoln/Documents/NetBeansProjects/Chat/src/chat/Cliente.java</file>
+            <file>file:/C:/Users/Lincoln/Documents/NetBeansProjects/Chat/src/chat/Servidor.java</file>
+            <file>file:/C:/Users/Lincoln/Documents/NetBeansProjects/Chat/src/chat/Requisitos.java</file>
         </group>
     </open-files>
 </project-private>
