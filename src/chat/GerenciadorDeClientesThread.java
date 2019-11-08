@@ -1,6 +1,7 @@
 package chat;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -40,7 +41,8 @@ public class GerenciadorDeClientesThread extends Thread {
                 mensagem = leitor.readLine();
 //****************************sair*********************************************
                 if (mensagem.equalsIgnoreCase("sair:")) {
-                    this.cliente.close();
+                    clientes.remove(this.nomeCliente, this);
+                    this.cliente.close();                    
                     listarUsuarios();
 //****************************login********************************************
                 } else if (mensagem.startsWith("login:")) {
@@ -81,14 +83,23 @@ public class GerenciadorDeClientesThread extends Thread {
                     if (nomes.equalsIgnoreCase(";")) {
                         //Guardando os nomes no arrayNomes
                         arrayNomes = nomes.split(";");
+                        //ainda não funciona
                         for (String n : arrayNomes) {
                             GerenciadorDeClientesThread destinatarios = clientes.get(n);   
                             destinatarios.getEscrever().println("Transmitir: " + this.nomeCliente + " disse"+ " : " + array[1]);
                         }                        
 //                        String nomesDestinatarios = Arrays.toString(arrayNomes);                        
-                        escrever.println("enviando para " + Arrays.toString(arrayNomes)+".");
-
-                    } else {
+                        escrever.println("enviando para " + Arrays.toString(arrayNomes)+".");                        
+                            //Ainda não funciona
+                    } else if(nomes.equals("*")){
+                            BufferedWriter buferDeEscrita;
+                         for (String n : arrayNomes) {
+                            GerenciadorDeClientesThread destinatarios = clientes.get(n);
+                            destinatarios.getEscrever().println("Transmitir: " + this.nomeCliente + " disse"+ " : " + array[1]);
+                                                         
+                         }            
+                    }
+                    else {
                         //Guardando o nome na posição zero e a posição 1 recebe o texto
                         String nomeDestinatario = array[0];
 
@@ -136,12 +147,12 @@ public class GerenciadorDeClientesThread extends Thread {
         for (String c : clientes.keySet()) {
             str.append(c);
 //            escrever.print("lista_usuarios:");
-            str.append(", ");
+            str.append("; ");
         }
         escrever.println(str.toString());
     }
 
-    public void login() throws IOException {
+    public synchronized void login() throws IOException {
         //O InputStream receber do cliente um pacote de dados em bytes.
         //O BufferedReader lê os bytes e converte em String.
         leitor = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
@@ -152,28 +163,43 @@ public class GerenciadorDeClientesThread extends Thread {
 //        System.out.println("Qual o seu nome? ");
         //O que o for escrito pelo cliente é guardado em mensagem.
         mensagem = leitor.readLine();
-        StringBuffer buscarNome = new StringBuffer();
-        for (String c : clientes.keySet()) {
-            buscarNome.append(c);
-            
-            //verificar isso até...
-                boolean confirmacaoDeUsuario = false;            
-                //corrigir teste falso
-                if (buscarNome.equals(mensagem)) {
-                    escrever.println("login:" + confirmacaoDeUsuario);
-                } else {
-                confirmacaoDeUsuario = true;
-                escrever.println("login:" + confirmacaoDeUsuario);
-                }
-            //aqui...
+        StringBuilder buscarNome = new StringBuilder();
+        boolean confirmacaoDeUsuario = false;
+        if (clientes.containsKey(this.nomeCliente)) {
+            escrever.println("Login: False");
+        }else{
+            escrever.println("Login: True");
         }
+//        for (String c : clientes.keySet()) {
+//            buscarNome.append(c);          
+//            
+//                //corrigir teste falso
+//                if (buscarNome.equals(mensagem)) {
+//                    escrever.println("login:" + confirmacaoDeUsuario);
+//                } else {
+//                confirmacaoDeUsuario = true;
+//                escrever.println("login:" + confirmacaoDeUsuario);
+//                }
+//            //aqui... 
+//        }   
         //Guarda o nome digitado
         this.nomeCliente = mensagem.toLowerCase();
 //        escrever.println("login: " + this.nomeCliente);
         //Colocar no mapa o próprio cliente.
         clientes.put(this.nomeCliente, this);
+       
         listarUsuarios();
     }
+    //talvez isso saia
+//    private void atualizarListaUsuarios(GerenciadorDeClientesThread cliente) {
+//        StringBuffer str = new StringBuffer();
+//        for (String c : clientes.keySet()) {
+//            if(this.cliente.equals(c))
+//            
+//        }                
+//        cliente.getEscrever().println(str.toString());
+//    }
+
 
 //    public BufferedReader getLeitor() {
 //        return leitor;
