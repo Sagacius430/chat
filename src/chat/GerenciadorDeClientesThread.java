@@ -62,7 +62,7 @@ public class GerenciadorDeClientesThread extends Thread {
     }
 
     public void sair() throws IOException {
-        // isso ainda não funciona
+        // isso ainda não funciona. corrigir
         String sair = this.nomeCliente;
         escrever.println(sair);
             for (String c: clientes.keySet()) {
@@ -86,7 +86,7 @@ public class GerenciadorDeClientesThread extends Thread {
             str.append(c);
             str.append("; ");
         }
-        //isso ainda não funciona
+        //isso ainda não funciona. corrigir
         synchronized (clientes) {
             for (String sincronizacao : clientes.keySet()) {
                 if(sincronizacao == null)
@@ -142,19 +142,18 @@ public class GerenciadorDeClientesThread extends Thread {
         if (array[0].contains(";")) {
             //Guardando os nomes no arrayNomes
             arrayNomes = nomes.split(";");
-            //ainda não funciona
+            //Envia pra uma lista de usuário feita pelo usuário OBS:talvez vire um método
             for (String n : arrayNomes) {
                 GerenciadorDeClientesThread destinatarios = clientes.get(n);
                 destinatarios.getEscrever().println("Transmitir: " + this.nomeCliente + " disse" + " : " + array[1]);
             }
             escrever.println("enviando para " + Arrays.toString(arrayNomes) + ".");
             //Ainda não funciona
-        } else if (nomes.equals("*")) {
-            BufferedWriter buferDeEscrita;
-            for (String n : arrayNomes) {
+        } else if (array[0].contains("*")) {  
+            //mensagem anviada para todos, porém corrigir o enviar pra sí mesmo.OBS:talvez vire um método
+            for (String n : clientes.keySet()) {
                 GerenciadorDeClientesThread destinatarios = clientes.get(n);
                 destinatarios.getEscrever().println("Transmitir: " + this.nomeCliente + " disse" + " : " + array[1]);
-
             }
         } else {
             //Guardando o nome na posição zero e a posição 1 recebe o texto
