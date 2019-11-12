@@ -24,8 +24,62 @@ public class ClienteFrame extends javax.swing.JFrame {
      */
     public ClienteFrame() {
         initComponents();
-        String[] usuarios = new String[]{"Lincoln, Carlos"};
+        setVisible(true);
+        String[] usuarios = new String[]{"Lincoln","Carlos"};
         prencherListaUsuarios(usuarios);
+    }
+    
+    //Preenche lista de usuários
+    private void prencherListaUsuarios(String[] usuarios) {
+        DefaultListModel modelo = new DefaultListModel();
+        listaUsuarios.setModel(modelo);
+        for (String usuario : usuarios) {
+            modelo.addElement(usuario);
+        }
+    }
+    
+    private void iniciarEscritor() {
+        //Escrevendo para o servidor
+        //Esperando digitação           
+        String mensagemTerminal = enviarTexto.getText();
+        
+        if (enviarTexto.getText().isEmpty()) {
+            return;
+        }
+//        DefaultListModel usuarios = getListaUsuarios();
+        Object usuario = listaUsuarios.getSelectedValue();
+        if (usuario != null) {
+            enviarTexto.getText();//pega o texto escrito
+            receberTexto.append(enviarTexto.getText());//mandar para visor de mensagens
+            
+            escrever.println("mensagem: "+usuario);            
+            escrever.println(enviarTexto.getText());
+            
+            //limpando editor
+            enviarTexto.setText(" ");
+            
+        } else {
+            if (mensagemTerminal.equalsIgnoreCase("sair")) {
+                System.exit(0);
+            }
+            JOptionPane.showMessageDialog(ClienteFrame.this, "Selecione um usuário");
+            return;
+        }        
+    }
+    
+     public void iniciarChat() {
+        try {
+            //O socket se conectará ao servidor com IP e porta
+            final Socket cliente = new Socket("192.168.0.17", 2424);
+            //Ouvindo o que o servidor ou outro cliente está escrevendo
+            escrever = new PrintWriter(cliente.getOutputStream(), true);
+
+            leitor = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
+
+        } catch (IOException e) {
+            System.err.println("Servidor fora do ar");
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -89,7 +143,7 @@ public class ClienteFrame extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
                     .addComponent(jScrollPane2)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -185,71 +239,13 @@ public class ClienteFrame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void iniciarEscritor() {
-        //Escrevendo para o servidor
-        //Esperando digitação           
-        String mensagemTerminal = enviarTexto.getText();
-        if (enviarTexto.getText().isEmpty()) {
-            return;
-        }
-        DefaultListModel usuarios = getListaUsuarios();
-        Object usuario = listaUsuarios.getSelectedValue();
-        if (usuarios != null) {
-            enviarTexto.getText();//pega p textp escrito
-            receberTexto.append(enviarTexto.getText());//mandar para mensagens
-            
-            escrever.println("mensagem:"+usuario);
-            escrever.println(enviarTexto.getText());
-            
-            //limpando editor
-            enviarTexto.setText(" ");
-            
-        } else {
-            if (mensagemTerminal.equalsIgnoreCase("SAIR")) {
-            System.exit(0);
-        }
-            JOptionPane.showMessageDialog(ClienteFrame.this, "Selecione um usuário");
-            return;
-        }        
-    }
-    
-    private void iniciarLeitor(){
-        //lendo mensagens do servidor
-        try {
-            while(true){
-                String mensagem = leitor.readLine();
-                if(mensagem == null || mensagem.isEmpty())
-                    continue;
-                if(mensagem.startsWith("lista_usuarios:")){
-                    //verificar a listagem de usuários. talves o leitor.readline para mensagem
-                    String lista = leitor.readLine().substring(15, mensagem.length());
-                    String[] usuarios = new String[5];
-                    usuarios = lista.split(",");
-                    prencherListaUsuarios(usuarios);
-                    
-                }else if(mensagem.equals("login:")){
-                    String login = JOptionPane.showInputDialog("login");
-                    escrever.println(login);
-                }else if(mensagem.equals("login_aceito")){
-                    atualizarListaUsuarios(); 
-                }else{
-                
-                enviarTexto.append(mensagem);
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Impossível ler mensagem do servidor");
-        }
-    }
-
+  
     private void botaoEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoEnviarActionPerformed
-        
         iniciarEscritor();
     }//GEN-LAST:event_botaoEnviarActionPerformed
 
     private void botaoAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoAtualizarActionPerformed
-
+        atualizarListaUsuarios();
     }//GEN-LAST:event_botaoAtualizarActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -266,31 +262,7 @@ public class ClienteFrame extends javax.swing.JFrame {
     private javax.swing.JList listaUsuarios;
     private javax.swing.JTextArea receberTexto;
     // End of variables declaration//GEN-END:variables
-
-    public void iniciarChat() {
-        try {
-            //O socket se conectará ao servidor com IP e porta
-            final Socket cliente = new Socket("192.168.0.17", 2424);
-            //Ouvindo o que o servidor ou outro cliente está escrevendo
-            escrever = new PrintWriter(cliente.getOutputStream(), true);
-
-            leitor = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
-
-        } catch (IOException e) {
-            System.err.println("Servidor fora do ar");
-            e.printStackTrace();
-        }
-    }
-
-    //Preenche lista de usuários
-    private void prencherListaUsuarios(String[] usuarios) {
-        DefaultListModel modelo = new DefaultListModel();
-        listaUsuarios.setModel(modelo);
-        for (String usuario : usuarios) {
-            modelo.addElement(usuario);
-        }
-    }
-
+   
     /**
      * @param args the command line arguments
      */
@@ -319,26 +291,60 @@ public class ClienteFrame extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                ClienteFrame cliente = new ClienteFrame();//.setVisible(true)
-                //corrigir a visibilidade da janela
-                cliente.setVisible(true);
-                cliente.iniciarChat();                
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                new ClienteFrame().setVisible(true);
+                
+                ClienteFrame cliente = new ClienteFrame();//.setVisible(true);
+                //corrigir a visibilidade da janela                
+                cliente.iniciarChat(); 
+//                cliente.setVisible(true);               
                 cliente.atualizarListaUsuarios();                
                 cliente.iniciarEscritor();                
                 cliente.iniciarLeitor();
-            }
-        });
-
+//            }
+//        });
     }
+    
+    
+    
     private void atualizarListaUsuarios(){
         escrever.println("lista_usuarios:");
-//        preencherListaUsuarios(usuarios);
+    }     
+    
+    private void iniciarLeitor(){
+        //lendo mensagens do servidor
+        try {
+            while(true){
+                String mensagem = leitor.readLine();
+                if(mensagem == null || mensagem.isEmpty())
+                    continue;
+                //recebe o texto
+                if(mensagem.equals("lista_usuarios:")){
+                    //verificar a listagem de usuários. talvez o leitor.readline para mensagem
+                    String[] usuarios = leitor.readLine().split(";");//.substring(15, mensagem.length());
+//                    String[] usuarios;// = new String[5];
+//                    usuarios = lista.split(";");
+                    prencherListaUsuarios(usuarios);
+                    
+                }else if(mensagem.equals("login:")){
+                    String login = JOptionPane.showInputDialog("login");
+                    escrever.println(login);
+                }else if(mensagem.equals("login: true")){
+                    atualizarListaUsuarios(); 
+                }else{                
+                    receberTexto.append(mensagem);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Impossível ler mensagem do servidor");
+        }
     }
 
+    
     private DefaultListModel getListaUsuarios() {
         return (DefaultListModel) listaUsuarios.getModel();
     }
+    
 }
