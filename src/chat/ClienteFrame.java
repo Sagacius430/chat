@@ -340,7 +340,7 @@ public class ClienteFrame extends javax.swing.JFrame {
                     atualizarListaUsuarios(); 
                 }else{                
                     receberTexto.append(mensagem);
-                    receberTexto.append("/n");
+                    receberTexto.append("\n");
                     receberTexto.setCaretPosition(receberTexto.getDocument().getLength());
                 }
             }
