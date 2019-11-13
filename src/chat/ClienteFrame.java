@@ -51,6 +51,7 @@ public class ClienteFrame extends javax.swing.JFrame {
         if (usuario != null) {
             enviarTexto.getText();//pega o texto escrito
             receberTexto.append(enviarTexto.getText());//mandar para visor de mensagens
+            receberTexto.append("\n");
             
             escrever.println("mensagem: "+usuario);            
             escrever.println(enviarTexto.getText());
@@ -58,8 +59,9 @@ public class ClienteFrame extends javax.swing.JFrame {
             //limpando editor
             enviarTexto.setText(" ");
             
+            
         } else {
-            if (mensagemTerminal.equalsIgnoreCase("sair")) {
+            if (receberTexto.equals("sair")) {
                 System.exit(0);
             }
             JOptionPane.showMessageDialog(ClienteFrame.this, "Selecione um usuário");
@@ -300,7 +302,7 @@ public class ClienteFrame extends javax.swing.JFrame {
                 //corrigir a visibilidade da janela                
                 cliente.iniciarChat(); 
 //                cliente.setVisible(true);               
-                cliente.atualizarListaUsuarios();                
+//                cliente.atualizarListaUsuarios();                
                 cliente.iniciarEscritor();                
                 cliente.iniciarLeitor();
 //            }
@@ -330,11 +332,16 @@ public class ClienteFrame extends javax.swing.JFrame {
                     
                 }else if(mensagem.equals("login:")){
                     String login = JOptionPane.showInputDialog("login");
-                    escrever.println(login);
+                    escrever.println(login);                                        
+                }
+                else if(mensagem.equals("login: false")){
+                    JOptionPane.showMessageDialog(ClienteFrame.this, "login inválido");
                 }else if(mensagem.equals("login: true")){
                     atualizarListaUsuarios(); 
                 }else{                
                     receberTexto.append(mensagem);
+                    receberTexto.append("/n");
+                    receberTexto.setCaretPosition(receberTexto.getDocument().getLength());
                 }
             }
         } catch (IOException e) {
