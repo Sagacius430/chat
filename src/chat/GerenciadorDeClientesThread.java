@@ -10,9 +10,10 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
- * @author Lincoln
+ * @author Lincoln CG3000001 & Carlos CG1502751
  */
 public class GerenciadorDeClientesThread extends Thread {
 
@@ -34,6 +35,12 @@ public class GerenciadorDeClientesThread extends Thread {
     public void run() {
 
         try {
+            //O InputStream receber do cliente um pacote de dados em bytes.
+            //O BufferedReader lê os bytes e converte em String.
+            leitor = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
+            //Falar com o cliente mandando mensagem pra fora. O true manda o println para o cliente de forma automática.
+            escrever = new PrintWriter(cliente.getOutputStream(), true);
+
             login();
 
             //Teste para conversar com o servidor
@@ -45,13 +52,23 @@ public class GerenciadorDeClientesThread extends Thread {
                     sair();
                 } //****************************mensagem*****************************************
                 //startsWith verifica se a string inicia com essa palavra
-                else if (mensagem.toLowerCase().startsWith("mensagem:")) {
+                else if (mensagem.toLowerCase().equals("mensagem:")) {
                     mensagem();
+                    String nomeDestinatario = mensagem.substring(mensagem.length());
+                    System.out.println("enviando para: " + nomeDestinatario);
+                    GerenciadorDeClientesThread destinatario = clientes.get(nomeDestinatario);
+                    if (destinatario == null) {
+                        escrever.println("O cliente informado não existe");
+                    } else {
+                        destinatario.getEscrever().println(this.nomeCliente + " disse: " + leitor.readLine());
+                    }
 
                 } //****************************listar usuarios**********************************
                 //Listar todos os clientes                
                 else if (mensagem.equals("lista_usuarios:")) {
-                    listarUsuarios();
+                    listarUsuarios(this);
+                } else {
+                    escrever.println(this.nomeCliente + " " + mensagem);
                 }
             }
 
@@ -65,69 +82,93 @@ public class GerenciadorDeClientesThread extends Thread {
         // isso ainda não funciona. corrigir
         String sair = this.nomeCliente;
         escrever.println(sair);
-            for (String c: clientes.keySet()) {
-                boolean equals = sair.equals(c);
-                if (equals) {
-                    clientes.remove(this.nomeCliente, this); 
-                    escrever.println("Será q foi?");
-                    this.cliente.close();
-                }else{
-                    escrever.println("Merda não removeu");
-                }
-            }
-        
-            
-        }
-   
-    public void listarUsuarios() {
-        //StringBuffer é mais rápida que a String
-        StringBuilder str = new StringBuilder();
-        for (String c : clientes.keySet()) {
-            str.append(c);
-            str.append("; ");
-        }
-        //isso ainda não funciona. corrigir
-        synchronized (clientes) {
-            for (String sincronizacao : clientes.keySet()) {
-                if(sincronizacao == null)
-                escrever.println("lista_usuarios: "+clientes.keySet());//teste
-            }
-            escrever.println("lista_usuarios: " + str.toString());
-        }
+        GerenciadorDeClientesThread usuarioSaiu = clientes.get(sair);
+        usuarioSaiu.getEscrever().println(this.nomeCliente+"Saiu");
+        clientes.remove(usuarioSaiu);
+        this.cliente.close();
+//        for (String c : clientes.keySet()) {
+//            boolean equals = sair.equals(c);
+//            if (equals) {
+//                clientes.remove(this.nomeCliente, this);
+//                escrever.println("Será q foi?");
+//                this.cliente.close();
+//            } else {
+//                escrever.println("Merda não removeu");
+//            }
+//        }
+
     }
 
-    public void login() throws IOException {
-        //O InputStream receber do cliente um pacote de dados em bytes.
-        //O BufferedReader lê os bytes e converte em String.
-        leitor = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
-        //Falar com o cliente mandando mensagem pra fora. O true manda o println para o cliente de forma automática.
-        escrever = new PrintWriter(cliente.getOutputStream(), true);
-        boolean login = false;
-        while (!login) {
-            //Cliente logando
+    public synchronized void login() throws IOException {
+        while (true) {
             escrever.println("login:");
-            //O que o for escrito pelo cliente é guardado em mensagem.
-            mensagem = leitor.readLine();
-            //Guarda o nome digitado com letras minusculas
-            this.nomeCliente = mensagem.toLowerCase();
-            boolean reset = false;
-            for (String c : clientes.keySet()) {
-                if (this.nomeCliente.equals(c)) {
-                    escrever.println("login: false");
-                    reset = true;
-                    break;
-                }
-            }
-            if (!reset) {
-                escrever.println("Login: true");
-                //Colocar no mapa o próprio cliente.
+            this.nomeCliente = leitor.readLine().toLowerCase().replaceAll(";","");
+            if (this.nomeCliente.equalsIgnoreCase("null") || this.nomeCliente.isEmpty()) {
+                escrever.println("login: false");
+            } else if (clientes.containsKey(this.nomeCliente)) {
+                escrever.println("login: false");
+            } else {
+                escrever.println("login: true");
+                escrever.println("olá " + this.nomeCliente);
+//            escrever.println(this.nomeCliente+": ");
                 clientes.put(this.nomeCliente, this);
-                listarUsuarios();
-                login = true;
+
+                for (String c : clientes.keySet()) {
+                    listarUsuarios(clientes.get(c));
+                }
+            break;
             }
-
         }
+        /*
+         boolean login = false;
+         while (!login) {
+         //Cliente logando
+         escrever.println("login:");
+         //O que o for escrito pelo cliente é guardado em mensagem.
+         mensagem = leitor.readLine();
+         //Guarda o nome digitado com letras minusculas
+         this.nomeCliente = mensagem.toLowerCase();
+         boolean reset = false;
+         for (String c : clientes.keySet()) {
+         if (this.nomeCliente.equals(c)) {
+         escrever.println("login: false");
+         reset = true;
+         break;
+         }
+         }
+         if (!reset) {
+         escrever.println("login_aceito");
+         escrever.println("login: true");
+         //Colocar no mapa o próprio cliente.
+         clientes.put(this.nomeCliente, this);
+         listarUsuarios();
+         login = true;
+         }
 
+         }*/
+
+    }
+
+    public void listarUsuarios(GerenciadorDeClientesThread cliente) {
+        //StringBuffer é mais rápida que a String
+        StringBuilder strCliente = new StringBuilder();
+        for (String c : clientes.keySet()) {
+            if (cliente.getNomeCliente().equals(c)) {
+                continue;
+            }
+            strCliente.append(c);
+            strCliente.append("; ");
+        }
+        cliente.getEscrever().println("lista_usuarios:");
+        cliente.getEscrever().println(strCliente.toString());
+        //isso ainda não funciona. corrigir
+//        synchronized (clientes) {
+//            for (String sincronizacao : clientes.keySet()) {
+//                if(sincronizacao == null)
+//                escrever.println("lista_usuarios: "+clientes.keySet());//teste
+//            }
+//            escrever.println("lista_usuarios: " + str.toString());
+//        }
     }
 
     public void mensagem() {
@@ -149,7 +190,7 @@ public class GerenciadorDeClientesThread extends Thread {
             }
             escrever.println("enviando para " + Arrays.toString(arrayNomes) + ".");
             //Ainda não funciona
-        } else if (array[0].contains("*")) {  
+        } else if (array[0].contains("*")) {
             //mensagem anviada para todos, porém corrigir o enviar pra sí mesmo.OBS:talvez vire um método
             for (String n : clientes.keySet()) {
                 GerenciadorDeClientesThread destinatarios = clientes.get(n);
