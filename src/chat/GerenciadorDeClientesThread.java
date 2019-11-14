@@ -49,21 +49,25 @@ public class GerenciadorDeClientesThread extends Thread {
 
 //****************************sair*********************************************
                 if (mensagem.equalsIgnoreCase("sair:")) {
-                    sair();
-                } //****************************mensagem*****************************************
+                    this.cliente.close();
+                } 
+//****************************mensagem*****************************************
                 //startsWith verifica se a string inicia com essa palavra
-                else if (mensagem.toLowerCase().equals("mensagem:")) {
+                else if (mensagem.toLowerCase().startsWith("mensagem:")) {
                     mensagem();
-                    String nomeDestinatario = mensagem.substring(mensagem.length());
-                    System.out.println("enviando para: " + nomeDestinatario);
-                    GerenciadorDeClientesThread destinatario = clientes.get(nomeDestinatario);
-                    if (destinatario == null) {
-                        escrever.println("O cliente informado não existe");
-                    } else {
-                        destinatario.getEscrever().println(this.nomeCliente + " disse: " + leitor.readLine());
-                    }
+//                    String nomeDestinatario = mensagem.substring(mensagem.length());
+//                    System.out.println("enviando para: " + nomeDestinatario);//comentar esta linha?
+//                    GerenciadorDeClientesThread destinatario = clientes.get(nomeDestinatario);
+//                    if (destinatario == null) {
+//                        escrever.println("O cliente informado não existe :(");
+//                    } else {
+////                        destinatario.getEscrever().println(this.nomeCliente + " disse: " + leitor.readLine());
+//                        
+//                        destinatario.escrever.println(this.nomeCliente +"disse: "+leitor.readLine());
+//                    }
 
-                } //****************************listar usuarios**********************************
+                } 
+//****************************listar usuarios**********************************
                 //Listar todos os clientes                
                 else if (mensagem.equals("lista_usuarios:")) {
                     listarUsuarios(this);
@@ -75,27 +79,29 @@ public class GerenciadorDeClientesThread extends Thread {
         } catch (IOException e) {
             //Se o cliente não responder, cair ou fechar.
             System.err.println("O cliente fechou");
+            clientes.remove(this.nomeCliente);
         }
     }
 
     public void sair() throws IOException {
         // isso ainda não funciona. corrigir
-        String sair = this.nomeCliente;
-        escrever.println(sair);
-        GerenciadorDeClientesThread usuarioSaiu = clientes.get(sair);
-        usuarioSaiu.getEscrever().println(this.nomeCliente+"Saiu");
-        clientes.remove(usuarioSaiu);
-        this.cliente.close();
-//        for (String c : clientes.keySet()) {
-//            boolean equals = sair.equals(c);
-//            if (equals) {
-//                clientes.remove(this.nomeCliente, this);
-//                escrever.println("Será q foi?");
-//                this.cliente.close();
-//            } else {
-//                escrever.println("Merda não removeu");
-//            }
-//        }
+        
+//        String sair = this.nomeCliente;
+//        escrever.println(sair);
+//        GerenciadorDeClientesThread usuarioSaiu = clientes.get(sair);
+//        usuarioSaiu.getEscrever().println(this.nomeCliente+"Saiu");
+//        clientes.remove(usuarioSaiu);
+//        this.cliente.close();
+////        for (String c : clientes.keySet()) {
+////            boolean equals = sair.equals(c);
+////            if (equals) {
+////                clientes.remove(this.nomeCliente, this);
+////                escrever.println("Será q foi?");
+////                this.cliente.close();
+////            } else {
+////                escrever.println("Merda não removeu");
+////            }
+////        }
 
     }
 
@@ -109,7 +115,7 @@ public class GerenciadorDeClientesThread extends Thread {
                 escrever.println("login: false");
             } else {
                 escrever.println("login: true");
-                escrever.println("olá " + this.nomeCliente);
+                escrever.println(this.nomeCliente+" logou no chat.");
 //            escrever.println(this.nomeCliente+": ");
                 clientes.put(this.nomeCliente, this);
 
@@ -178,6 +184,7 @@ public class GerenciadorDeClientesThread extends Thread {
         String arrayNomes[] = new String[10];
         array = nomeEMensagem.split(":");
         String nomes = array[0];
+//        String msg = array[1];
         //Se a posição 0, que tem o nome, tiver mais nomes separados por ";"
         //divide os nomes por ";" e coloca no arraynomes
         if (array[0].contains(";")) {
@@ -201,8 +208,8 @@ public class GerenciadorDeClientesThread extends Thread {
             String nomeDestinatario = array[0];
 
             GerenciadorDeClientesThread destinatario = clientes.get(nomeDestinatario);
-            escrever.println("enviando para " + nomeDestinatario);
-
+            escrever.println("enviando para -> " + destinatario.nomeCliente);//comente esta linha?
+//            destinatario.getEscrever().println("-->>" + this.nomeCliente + " disse: " + msg);
             if (destinatario == null) {
                 escrever.println("Cliente não existe");
             } else {
