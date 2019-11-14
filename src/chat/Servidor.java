@@ -7,7 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author Lincoln
+ * @author Lincoln CG3000001 & Carlos CG1502751
  */
 public class Servidor {
     public static void main(String[] args) throws IOException {
