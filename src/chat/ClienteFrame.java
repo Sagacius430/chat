@@ -18,6 +18,7 @@ public class ClienteFrame extends javax.swing.JFrame {
 
     private PrintWriter escrever;
     private BufferedReader leitor;
+    private String nomeCliente;
 
     /**
      * Creates new form ClienteFrame
@@ -63,18 +64,19 @@ public class ClienteFrame extends javax.swing.JFrame {
             
             
         } else {
-            if (receberTexto.equals("sair")) {
-                System.exit(0);
-            }
-            JOptionPane.showMessageDialog(ClienteFrame.this, "Selecione um usuário");
-            return;
+//            if (receberTexto.equals("sair")) {
+//                System.exit(0);
+//            }
+            escrever.println("mensagem:"+"*"+":"+enviarTexto.getText());
+//            JOptionPane.showMessageDialog(ClienteFrame.this, "Selecione um usuário");
+//            return;
         }        
     }
     
      public void iniciarChat() {
         try {
             //O socket se conectará ao servidor com IP e porta
-            final Socket cliente = new Socket("192.168.0.17", 2424);
+            final Socket cliente = new Socket("localhost", 2424);
             //Ouvindo o que o servidor ou outro cliente está escrevendo
             escrever = new PrintWriter(cliente.getOutputStream(), true);
 
@@ -106,6 +108,8 @@ public class ClienteFrame extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         listaUsuarios = new javax.swing.JList();
         botaoAtualizar = new javax.swing.JButton();
+        nomeLogin = new javax.swing.JLabel();
+        botaoSair = new javax.swing.JButton();
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -119,7 +123,7 @@ public class ClienteFrame extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Chat - Cliente");
+        setTitle(this.nomeCliente);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Mensagens"));
 
@@ -202,6 +206,15 @@ public class ClienteFrame extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        nomeLogin.setText("Nome logado");
+
+        botaoSair.setText("sair");
+        botaoSair.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoSairActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -209,8 +222,17 @@ public class ClienteFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(29, 29, 29)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(nomeLogin)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(botaoSair)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -219,10 +241,16 @@ public class ClienteFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(71, 71, 71))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(nomeLogin)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(botaoSair)
+                        .addGap(17, 17, 17))
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        nomeLogin.getAccessibleContext().setAccessibleName("");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -235,9 +263,17 @@ public class ClienteFrame extends javax.swing.JFrame {
         atualizarListaUsuarios();
     }//GEN-LAST:event_botaoAtualizarActionPerformed
 
+    private void botaoSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoSairActionPerformed
+        System.exit(0);
+        this.receberTexto.setEditable(false);
+        this.enviarTexto.setEditable(false);
+        
+    }//GEN-LAST:event_botaoSairActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botaoAtualizar;
     private javax.swing.JButton botaoEnviar;
+    private javax.swing.JButton botaoSair;
     private javax.swing.JTextArea enviarTexto;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -246,6 +282,7 @@ public class ClienteFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JList listaUsuarios;
+    private javax.swing.JLabel nomeLogin;
     private javax.swing.JTextArea receberTexto;
     // End of variables declaration//GEN-END:variables
    
@@ -315,11 +352,11 @@ public class ClienteFrame extends javax.swing.JFrame {
                     prencherListaUsuarios(usuarios);
                     
                 }else if(mensagem.equals("login:")){
-                    String login = JOptionPane.showInputDialog("login");
+                    String login = JOptionPane.showInputDialog("login:");
                     escrever.println(login);                                        
                 }
                 else if(mensagem.equals("login: false")){
-                    JOptionPane.showMessageDialog(ClienteFrame.this, "login inválido");
+                    JOptionPane.showMessageDialog(ClienteFrame.this, "login: false");
                 }else if(mensagem.equals("login: true")){
                     atualizarListaUsuarios(); 
                 }else{                

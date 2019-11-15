@@ -115,7 +115,7 @@ public class GerenciadorDeClientesThread extends Thread {
                 escrever.println("login: false");
             } else {
                 escrever.println("login: true");
-                escrever.println(this.nomeCliente+" logou no chat.");
+                escrever.println(this.nomeCliente+" login: true.");
 //            escrever.println(this.nomeCliente+": ");
                 clientes.put(this.nomeCliente, this);
 
@@ -201,14 +201,14 @@ public class GerenciadorDeClientesThread extends Thread {
             //mensagem anviada para todos, porém corrigir o enviar pra sí mesmo.OBS:talvez vire um método
             for (String n : clientes.keySet()) {
                 GerenciadorDeClientesThread destinatarios = clientes.get(n);
-                destinatarios.getEscrever().println("Transmitir: " + this.nomeCliente + " disse" + " : " + array[1]);
+                destinatarios.getEscrever().println(this.nomeCliente + " disse" + " : " + array[1]);
             }
         } else {
             //Guardando o nome na posição zero e a posição 1 recebe o texto
             String nomeDestinatario = array[0];
 
             GerenciadorDeClientesThread destinatario = clientes.get(nomeDestinatario);
-            escrever.println("enviando para -> " + destinatario.nomeCliente);//comente esta linha?
+            escrever.println("enviando para: " + destinatario.nomeCliente);//comente esta linha?
 //            destinatario.getEscrever().println("-->>" + this.nomeCliente + " disse: " + msg);
             if (destinatario == null) {
                 escrever.println("Cliente não existe");
