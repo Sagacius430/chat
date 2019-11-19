@@ -62,7 +62,6 @@ public class GerenciadorDeClientesThread extends Thread {
 //                        
 //                        destinatario.escrever.println(this.nomeCliente +"disse: "+leitor.readLine());
 //                    }
-
                 } 
 //****************************listar usuarios**********************************
                 //Listar todos os clientes                
@@ -112,13 +111,12 @@ public class GerenciadorDeClientesThread extends Thread {
             } else {
                 escrever.println("login: true");
                 escrever.println(this.nomeCliente+" está online");
-//            escrever.println(this.nomeCliente+": ");                
-                
                 clientes.put(this.nomeCliente, this);
 
                 for (String c : clientes.keySet()) {
                     listarUsuarios(clientes.get(c));
                 }
+                
             break;
             }
         }
@@ -162,6 +160,7 @@ public class GerenciadorDeClientesThread extends Thread {
             strCliente.append(c);
             strCliente.append("; ");
         }
+        //Manda para a area de texto de usuarios
         cliente.getEscrever().println("lista_usuarios:");
         cliente.getEscrever().println(strCliente.toString());        
                 
