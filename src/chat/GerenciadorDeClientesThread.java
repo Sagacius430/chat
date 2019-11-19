@@ -151,10 +151,8 @@ public class GerenciadorDeClientesThread extends Thread {
     public void listarUsuarios(GerenciadorDeClientesThread cliente) {
         //StringBuffer é mais rápida que a String
         StringBuilder strCliente = new StringBuilder();
-//        String nomePrincipal = new String();
         for (String c : clientes.keySet()) {
             if (cliente.getNomeCliente().equals(c)) {
-//                nomePrincipal = c;
                 continue;
             }
             strCliente.append(c);
