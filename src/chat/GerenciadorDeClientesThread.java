@@ -1,16 +1,13 @@
 package chat;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * @author Lincoln CG3000001 & Carlos CG1502751
@@ -84,8 +81,7 @@ public class GerenciadorDeClientesThread extends Thread {
     }
 
     public void sair() throws IOException {
-        // isso ainda não funciona. corrigir
-        
+        // isso ainda não funciona. corrigir        
 //        String sair = this.nomeCliente;
 //        escrever.println(sair);
 //        GerenciadorDeClientesThread usuarioSaiu = clientes.get(sair);
@@ -102,21 +98,22 @@ public class GerenciadorDeClientesThread extends Thread {
 ////                escrever.println("Merda não removeu");
 ////            }
 ////        }
-
     }
 
     public synchronized void login() throws IOException {
         while (true) {
             escrever.println("login:");
             this.nomeCliente = leitor.readLine().toLowerCase().replaceAll(";","");
+            
             if (this.nomeCliente.equalsIgnoreCase("null") || this.nomeCliente.isEmpty()) {
                 escrever.println("login: false");
             } else if (clientes.containsKey(this.nomeCliente)) {
                 escrever.println("login: false");
             } else {
                 escrever.println("login: true");
-                escrever.println(this.nomeCliente+" login: true.");
-//            escrever.println(this.nomeCliente+": ");
+                escrever.println(this.nomeCliente+" está online");
+//            escrever.println(this.nomeCliente+": ");                
+                
                 clientes.put(this.nomeCliente, this);
 
                 for (String c : clientes.keySet()) {
@@ -150,23 +147,24 @@ public class GerenciadorDeClientesThread extends Thread {
          listarUsuarios();
          login = true;
          }
-
          }*/
-
     }
 
     public void listarUsuarios(GerenciadorDeClientesThread cliente) {
         //StringBuffer é mais rápida que a String
         StringBuilder strCliente = new StringBuilder();
+//        String nomePrincipal = new String();
         for (String c : clientes.keySet()) {
             if (cliente.getNomeCliente().equals(c)) {
+//                nomePrincipal = c;
                 continue;
             }
             strCliente.append(c);
             strCliente.append("; ");
         }
         cliente.getEscrever().println("lista_usuarios:");
-        cliente.getEscrever().println(strCliente.toString());
+        cliente.getEscrever().println(strCliente.toString());        
+                
         //isso ainda não funciona. corrigir
 //        synchronized (clientes) {
 //            for (String sincronizacao : clientes.keySet()) {
@@ -193,7 +191,7 @@ public class GerenciadorDeClientesThread extends Thread {
             //Envia pra uma lista de usuário feita pelo usuário OBS:talvez vire um método
             for (String n : arrayNomes) {
                 GerenciadorDeClientesThread destinatarios = clientes.get(n);
-                destinatarios.getEscrever().println("Transmitir: " + this.nomeCliente + " disse" + " : " + array[1]);
+                destinatarios.getEscrever().println(this.nomeCliente + " disse" + " : " + array[1]);
             }
             escrever.println("enviando para " + Arrays.toString(arrayNomes) + ".");
             //Ainda não funciona
@@ -213,7 +211,7 @@ public class GerenciadorDeClientesThread extends Thread {
             if (destinatario == null) {
                 escrever.println("Cliente não existe");
             } else {
-                destinatario.getEscrever().println("Transmitir: " + this.nomeCliente + " disse"/*+ destinatario.getNomeCliente() */ + " : " + array[1]);
+                destinatario.getEscrever().println(this.nomeCliente + " disse"/*+ destinatario.getNomeCliente() */ + " : " + array[1]);
             }
         }
     }
@@ -225,5 +223,5 @@ public class GerenciadorDeClientesThread extends Thread {
     public String getNomeCliente() {
         return nomeCliente;
     }
-
+    
 }
