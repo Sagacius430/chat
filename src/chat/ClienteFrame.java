@@ -17,8 +17,6 @@ public class ClienteFrame extends javax.swing.JFrame {
 
     private PrintWriter escrever;
     private BufferedReader leitor;
-    private String nomeCliente;
-    private ImageIcon imgEnviar;
 
     /**
      * Creates new form ClienteFrame
@@ -59,11 +57,9 @@ public class ClienteFrame extends javax.swing.JFrame {
             exibirDados.setText(usuario.toString());
 //            escrever.println(" enviou mensagem para: "+usuario);            
 //            escrever.println(" disse: "+enviarTexto.getText()+"<-");
-            escrever.println("mensagem:"+usuario+":"+enviarTexto.getText());
-            
+            escrever.println("mensagem:"+usuario+":"+enviarTexto.getText());            
             //limpando editor
-            enviarTexto.setText(" ");
-            
+            enviarTexto.setText(" ");            
             
         } else {
 //            if (receberTexto.equals("sair")) {
@@ -371,8 +367,6 @@ public class ClienteFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
   
     private void botaoEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoEnviarActionPerformed
-        imgEnviar = new ImageIcon("seng.png");
-//        JButton botaoEnviar = new JButton("Sair",imgEnviar);
         iniciarEscritor();        
     }//GEN-LAST:event_botaoEnviarActionPerformed
 
@@ -460,9 +454,8 @@ public class ClienteFrame extends javax.swing.JFrame {
 //            }
 //        });
     }
-    
-    
-    
+       
+    //ATENÇÂO a lista não está atualizando ao deslogar. Corrigir isso
     private void atualizarListaUsuarios(){
         escrever.println("lista_usuarios:");
     }     
@@ -508,15 +501,6 @@ public class ClienteFrame extends javax.swing.JFrame {
     
     private DefaultListModel getListaUsuarios() {
         return (DefaultListModel) listaUsuarios.getModel();
-    }
-
-    //apagar isso, caso não use
-    public void setIcone() {
-        
-//        setIconImage(Toolkit.//.getDefaultToolkit().getImage(getClass().getResource("avatar.png")));
-//        URL caminhoIcone = getClass().getResource("/chat/imagens.avatar.png");
-//        Image iconeTitulo = Toolkit.getImageAccessor();
-//        this.setIconImage(iconeTitulo);
     }
     
 }
