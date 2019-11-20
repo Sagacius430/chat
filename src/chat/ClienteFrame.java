@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
@@ -48,24 +47,27 @@ public class ClienteFrame extends javax.swing.JFrame {
             return;
         }
 //        DefaultListModel usuarios = getListaUsuarios();
-        Object usuario = listaUsuarios.getSelectedValue();
-        if (usuario != null) {
-//            receberTexto.append(enviarTexto.getText()+":::");//pega o texto escrito
-//            receberTexto.append(enviarTexto.getText());//mandar para visor de mensagens
+        Object usuario = listaUsuarios.getSelectedValue();// como selecionar mais de um?
+        if (usuario != null) {//mensagem para um único usuário
+//            receberTexto.append(enviarTexto.getText());//pega o texto escrito
+//            receberTexto.append(enviarTexto.getText());
 //            receberTexto.append("\n");
             iconeAvatar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/chat/imagens/avatar2.png")));            
-            exibirDados.setText(usuario.toString());
-//            escrever.println(" enviou mensagem para: "+usuario);            
-//            escrever.println(" disse: "+enviarTexto.getText()+"<-");
-            escrever.println("mensagem:"+usuario+":"+enviarTexto.getText());            
+            exibirDados.setText(usuario.toString());            
+            //mandar para gerenciador, mensagem+usuario selecionado + texto escrito 
+            //a thread genrenciador trata e devolve para o visor de mensagens          
+            escrever.println("mensagem:"+usuario+":"+enviarTexto.getText());
             //limpando editor
             enviarTexto.setText(" ");            
             
         } else {
+              //mensagem para todos
 //            if (receberTexto.equals("sair")) {
 //                System.exit(0);
 //            }
+            //mandar para gerenciador, a thread trata e devolve para o visor de mensagens de todos os usuários
             iconeAvatar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/chat/imagens/avatarGrupo.png")));
+            exibirDados.setText("Todos");
             escrever.println("mensagem:"+"*"+":"+enviarTexto.getText());
             enviarTexto.setText(" ");
 //            JOptionPane.showMessageDialog(ClienteFrame.this, "Selecione um usuário");
@@ -375,6 +377,7 @@ public class ClienteFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_botaoAtualizarActionPerformed
 
     private void botaoSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoSairActionPerformed
+        escrever.println("sair:");
         System.exit(0);
         this.receberTexto.setEditable(false);
         this.enviarTexto.setEditable(false);
@@ -455,7 +458,6 @@ public class ClienteFrame extends javax.swing.JFrame {
 //        });
     }
        
-    //ATENÇÂO a lista não está atualizando ao deslogar. Corrigir isso
     private void atualizarListaUsuarios(){
         escrever.println("lista_usuarios:");
     }     
