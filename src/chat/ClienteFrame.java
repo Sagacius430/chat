@@ -37,6 +37,10 @@ public class ClienteFrame extends javax.swing.JFrame {
         }
     }
     
+//    Coisas a fazer:
+//    *Enviar msg em branco
+//    *Conversa entre três usuários ou mais
+//    *Enviar msg para grupo
     private void iniciarEscritor() {
         //Escrevendo para o servidor
         //Esperando digitação           
