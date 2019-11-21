@@ -20,14 +20,14 @@ public class ClienteFrame extends javax.swing.JFrame {
     /**
      * Creates new form ClienteFrame
      */
-    public ClienteFrame() {        
+    public ClienteFrame() {
         initComponents();
 //        setIcone();
         setVisible(true);
-        String[] usuarios = new String[]{"Lincoln","Carlos"};
-        prencherListaUsuarios(usuarios);        
+        String[] usuarios = new String[]{"Lincoln", "Carlos"};
+        prencherListaUsuarios(usuarios);
     }
-    
+
     //Preenche lista de usuários
     private void prencherListaUsuarios(String[] usuarios) {
         DefaultListModel modelo = new DefaultListModel();
@@ -36,50 +36,65 @@ public class ClienteFrame extends javax.swing.JFrame {
             modelo.addElement(usuario);
         }
     }
-    
+
 //    Coisas a fazer:
 //    *Enviar msg em branco
-//    *Conversa entre três usuários ou mais
-//    *Enviar msg para grupo
+//    *Conversa entre três usuários ou mais <-- tratando
+//    *Enviar msg para grupo <-- "tratado"(aguardando o anterior)
+//    *Atualizar a lista de usuário asim que um usuário sair    
     private void iniciarEscritor() {
         //Escrevendo para o servidor
         //Esperando digitação           
         String mensagemTerminal = enviarTexto.getText();
-        
+
         if (mensagemTerminal.isEmpty()) {
             JOptionPane.showMessageDialog(ClienteFrame.this, "Mensagem vazia");
             return;
         }
-//        DefaultListModel usuarios = getListaUsuarios();
-        Object usuario = listaUsuarios.getSelectedValue();// como selecionar mais de um?
-        if (usuario != null) {//mensagem para um único usuário
+//        DefaultListModel usuarios = getListaUsuarios();        
+        Object usuario = listaUsuarios.getSelectedValue();
+        Object usuarios = listaUsuarios.getSelectedValuesList(); // selecionar mais de um
+        //Se objeto usuários tever "," terá mais de um usuário. 
+
+        if (usuarios.toString().contains(",")) {                                                                       //código de teste para enviar
+            iconeAvatar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/chat/imagens/avatarGrupo.png"))); //msg para grupo selecionado           
+            exibirDados.setText("Grupo");                                                                            //testar depois de
+            //então envia para o gerenciador tratar utilizando o protocolo                                           //corrigir reconhecimento
+            escrever.println("mensagem:" + usuarios + ":" + enviarTexto.getText());                                        //dos outros usuário       
+            enviarTexto.setText(" ");                                                                                //no chat   
+        } else if (usuario != null) {//mensagem para um único usuário
 //            receberTexto.append(enviarTexto.getText());//pega o texto escrito
 //            receberTexto.append(enviarTexto.getText());
 //            receberTexto.append("\n");
-            iconeAvatar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/chat/imagens/avatar2.png")));            
-            exibirDados.setText(usuario.toString());            
-            //mandar para gerenciador, mensagem+usuario selecionado + texto escrito 
-            //a thread genrenciador trata e devolve para o visor de mensagens          
-            escrever.println("mensagem:"+usuario+":"+enviarTexto.getText());
-            //limpando editor
-            enviarTexto.setText(" ");            
-            
+            if (enviarTexto.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(ClienteFrame.this, "Mensagem vazia");
+            } else {
+                iconeAvatar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/chat/imagens/avatar2.png")));
+                exibirDados.setText(usuario.toString());
+                //mandar para gerenciador, mensagem+usuario selecionado + texto escrito 
+                //a thread genrenciador vai tratar e devolver para o exibidor de mensagens          
+                escrever.println("mensagem:" + usuario + ":" + enviarTexto.getText());
+                //limpando editor
+                enviarTexto.setText(" ");
+            }
         } else {
-              //mensagem para todos
-//            if (receberTexto.equals("sair")) {
-//                System.exit(0);
-//            }
-            //mandar para gerenciador, a thread trata e devolve para o visor de mensagens de todos os usuários
-            iconeAvatar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/chat/imagens/avatarGrupo.png")));
-            exibirDados.setText("Todos");
-            escrever.println("mensagem:"+"*"+":"+enviarTexto.getText());
-            enviarTexto.setText(" ");
+            if (enviarTexto.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(ClienteFrame.this, "Mensagem vazia");
+            } else {
+            //mensagem para todos
+                //mandar para gerenciador, a thread tratar e devolver para o visor de mensagens de todos os usuários
+                iconeAvatar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/chat/imagens/avatarGrupo.png")));
+                exibirDados.setText("Todos");
+                escrever.println("mensagem:" + "*" + ":" + enviarTexto.getText());
+                //limpando editor
+                enviarTexto.setText(" ");
 //            JOptionPane.showMessageDialog(ClienteFrame.this, "Selecione um usuário");
 //            return;
-        }        
+            }
+        }
     }
-    
-     public void iniciarChat() {
+
+    public void iniciarChat() {
         try {
             //O socket se conectará ao servidor com IP e porta
             final Socket cliente = new Socket("localhost", 2424);
@@ -371,9 +386,9 @@ public class ClienteFrame extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-  
+
     private void botaoEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoEnviarActionPerformed
-        iniciarEscritor();        
+        iniciarEscritor();
     }//GEN-LAST:event_botaoEnviarActionPerformed
 
     private void botaoAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoAtualizarActionPerformed
@@ -385,13 +400,12 @@ public class ClienteFrame extends javax.swing.JFrame {
         System.exit(0);
         this.receberTexto.setEditable(false);
         this.enviarTexto.setEditable(false);
-        
     }//GEN-LAST:event_botaoSairActionPerformed
 
     private void botaoAnexarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoAnexarActionPerformed
         botaoAnexar.setToolTipText("Anexar");
     }//GEN-LAST:event_botaoAnexarActionPerformed
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botaoAnexar;
     private javax.swing.JButton botaoAtualizar;
@@ -418,7 +432,7 @@ public class ClienteFrame extends javax.swing.JFrame {
     private javax.swing.JLabel nomeLogin;
     private javax.swing.JTextArea receberTexto;
     // End of variables declaration//GEN-END:variables
-   
+
     /**
      * @param args the command line arguments
      */
@@ -451,52 +465,49 @@ public class ClienteFrame extends javax.swing.JFrame {
 //            @Override
 //            public void run() {
 //                new ClienteFrame().setVisible(true);                
-                ClienteFrame cliente = new ClienteFrame();//.setVisible(true);
-                //corrigir a visibilidade da janela                
-                cliente.iniciarChat(); 
+        ClienteFrame cliente = new ClienteFrame();//.setVisible(true);
+        //corrigir a visibilidade da janela                
+        cliente.iniciarChat();
 //                cliente.setVisible(true);               
 //                cliente.atualizarListaUsuarios();   
-                cliente.iniciarLeitor();
-                cliente.iniciarEscritor(); 
+        cliente.iniciarLeitor();
+        cliente.iniciarEscritor();
 //            }
 //        });
     }
-       
-    private void atualizarListaUsuarios(){
+
+    private void atualizarListaUsuarios() {
         escrever.println("lista_usuarios:");
-    }     
-    
-    private void iniciarLeitor(){
+    }
+
+    private void iniciarLeitor() {
         //lendo mensagens do servidor
         try {
-            while(true){
+            while (true) {
                 String mensagem = leitor.readLine();
-                
-                if(mensagem == null || mensagem.isEmpty())
+
+                if (mensagem == null || mensagem.isEmpty()) {
                     continue;
+                }
                 //recebe o texto
-                if(mensagem.equals("lista_usuarios:")){
+                if (mensagem.equals("lista_usuarios:")) {
                     //verificar a listagem de usuários. talvez o leitor.readline para mensagem
                     String[] usuarios = leitor.readLine().split(";");//.substring(15, mensagem.length());
 //                    String[] usuarios;// = new String[5];
 //                    usuarios = lista.split(";");
-                    prencherListaUsuarios(usuarios);                    
-                }
-                else if(mensagem.equals("login:")){
+                    prencherListaUsuarios(usuarios);
+                } else if (mensagem.equals("login:")) {
                     String login = JOptionPane.showInputDialog("login:");
-                    escrever.println(login);                                        
-                }
-                else if(mensagem.equals("login: false")){
-                    JOptionPane.showMessageDialog(ClienteFrame.this, "Digite um nome para logar no chat.");                    
-                }
-                else if(mensagem.equals("login: true")){
+                    escrever.println(login);
+                } else if (mensagem.equals("login: false")) {
+                    JOptionPane.showMessageDialog(ClienteFrame.this, "Digite um nome para logar no chat.");
+                } else if (mensagem.equals("login: true")) {
                     nomeLogin.setText(leitor.readLine()); //setar o nome de login aqui                    
-                    atualizarListaUsuarios(); 
-                }
-                else{                
+                    atualizarListaUsuarios();
+                } else {
                     receberTexto.append(mensagem);
                     receberTexto.append("\n");
-                    receberTexto.setCaretPosition(receberTexto.getDocument().getLength());                    
+                    receberTexto.setCaretPosition(receberTexto.getDocument().getLength());
                 }
             }
         } catch (IOException e) {
@@ -504,9 +515,8 @@ public class ClienteFrame extends javax.swing.JFrame {
         }
     }
 
-    
     private DefaultListModel getListaUsuarios() {
         return (DefaultListModel) listaUsuarios.getModel();
     }
-    
+
 }
