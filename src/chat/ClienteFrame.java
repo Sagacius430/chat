@@ -22,7 +22,6 @@ public class ClienteFrame extends javax.swing.JFrame {
      */
     public ClienteFrame() {
         initComponents();
-//        setIcone();
         setVisible(true);
         String[] usuarios = new String[]{"Lincoln", "Carlos"};
         prencherListaUsuarios(usuarios);
@@ -33,13 +32,12 @@ public class ClienteFrame extends javax.swing.JFrame {
         DefaultListModel modelo = new DefaultListModel();
         listaUsuarios.setModel(modelo);
         for (String usuario : usuarios) {
-            modelo.addElement(usuario);
+            
+                modelo.addElement(usuario);            
         }
     }
 
 //    Coisas a fazer:
-//    *Enviar msg em branco
-//    *Conversa entre três usuários ou mais <-- tratando
 //    *Enviar msg para grupo <-- "tratado"(aguardando o anterior)
 //    *Atualizar a lista de usuário asim que um usuário sair    
     private void iniciarEscritor() {
@@ -47,25 +45,20 @@ public class ClienteFrame extends javax.swing.JFrame {
         //Esperando digitação           
         String mensagemTerminal = enviarTexto.getText();
 
-        if (mensagemTerminal.isEmpty()) {
+        if (mensagemTerminal.trim().isEmpty()) {
             JOptionPane.showMessageDialog(ClienteFrame.this, "Mensagem vazia");
             return;
-        }
-//        DefaultListModel usuarios = getListaUsuarios();        
+        }        
         Object usuario = listaUsuarios.getSelectedValue();
-        Object usuarios = listaUsuarios.getSelectedValuesList(); // selecionar mais de um
-        //Se objeto usuários tever "," terá mais de um usuário. 
+        Object usuarios = listaUsuarios.getSelectedValuesList(); // selecionar mais de um        
 
-        if (usuarios.toString().contains(",")) {                                                                       //código de teste para enviar
+        if (usuarios.toString().contains(",")) {                                                                      //código de teste para enviar
             iconeAvatar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/chat/imagens/avatarGrupo.png"))); //msg para grupo selecionado           
             exibirDados.setText("Grupo");                                                                            //testar depois de
             //então envia para o gerenciador tratar utilizando o protocolo                                           //corrigir reconhecimento
-            escrever.println("mensagem:" + usuarios + ":" + enviarTexto.getText());                                        //dos outros usuário       
-            enviarTexto.setText(" ");                                                                                //no chat   
+            escrever.println("mensagem:" + usuarios + ":" + enviarTexto.getText());                                  //dos outros usuário       
+            enviarTexto.setText("");                                                                                 //no chat   
         } else if (usuario != null) {//mensagem para um único usuário
-//            receberTexto.append(enviarTexto.getText());//pega o texto escrito
-//            receberTexto.append(enviarTexto.getText());
-//            receberTexto.append("\n");
             if (enviarTexto.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(ClienteFrame.this, "Mensagem vazia");
             } else {
@@ -75,7 +68,7 @@ public class ClienteFrame extends javax.swing.JFrame {
                 //a thread genrenciador vai tratar e devolver para o exibidor de mensagens          
                 escrever.println("mensagem:" + usuario + ":" + enviarTexto.getText());
                 //limpando editor
-                enviarTexto.setText(" ");
+                enviarTexto.setText("");
             }
         } else {
             if (enviarTexto.getText().isEmpty()) {
@@ -87,9 +80,7 @@ public class ClienteFrame extends javax.swing.JFrame {
                 exibirDados.setText("Todos");
                 escrever.println("mensagem:" + "*" + ":" + enviarTexto.getText());
                 //limpando editor
-                enviarTexto.setText(" ");
-//            JOptionPane.showMessageDialog(ClienteFrame.this, "Selecione um usuário");
-//            return;
+                enviarTexto.setText("");
             }
         }
     }
@@ -493,8 +484,6 @@ public class ClienteFrame extends javax.swing.JFrame {
                 if (mensagem.equals("lista_usuarios:")) {
                     //verificar a listagem de usuários. talvez o leitor.readline para mensagem
                     String[] usuarios = leitor.readLine().split(";");//.substring(15, mensagem.length());
-//                    String[] usuarios;// = new String[5];
-//                    usuarios = lista.split(";");
                     prencherListaUsuarios(usuarios);
                 } else if (mensagem.equals("login:")) {
                     String login = JOptionPane.showInputDialog("login:");
