@@ -47,7 +47,7 @@ public class Cliente {
                 String mensagemTerminal = leitorTerminal.readLine();
                 
                 escrever.println(mensagemTerminal);
-                if(mensagemTerminal.equalsIgnoreCase("SAIR")){
+                if(mensagemTerminal.equalsIgnoreCase("SAIR:")){
                     System.exit(0);
                 }
                     
