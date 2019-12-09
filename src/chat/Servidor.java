@@ -1,6 +1,8 @@
 package chat;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -25,11 +27,9 @@ public class Servidor {
                 //O accept espera um cliente conectar, assim vem um socket para o servidor
                 Socket cliente = servidor.accept();
                 //Criando um novo cliente
-                new GerenciadorDeClientesThread(cliente);
-                
+                new GerenciadorDeClientesThread(cliente); 
             }            
-            
-            
+                        
         } catch (IOException ex) {
             Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
             servidor.close();

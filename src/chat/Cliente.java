@@ -42,12 +42,16 @@ public class Cliente {
             BufferedReader leitorTerminal = new BufferedReader(new InputStreamReader(System.in));
             //Scanner leitorTerminal = new Scanner(cliente.getInputStream());
             
-            //Esperando digitação do terminal            
+            //Esperando digitação do terminal
+//            String mensagemTerminal ="";
             while(true){
                 String mensagemTerminal = leitorTerminal.readLine();
-                
+//                mensagemTerminal = leitorTerminal.readLine();
+//                if(mensagemTerminal==null || mensagemTerminal.length() == 0){
+//                    continue;
+//                }
                 escrever.println(mensagemTerminal);
-                if(mensagemTerminal.equalsIgnoreCase("SAIR:")){
+                if(mensagemTerminal.equalsIgnoreCase("sair:")){
                     System.exit(0);
                 }
                     

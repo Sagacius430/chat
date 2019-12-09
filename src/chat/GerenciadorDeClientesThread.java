@@ -69,6 +69,7 @@ public class GerenciadorDeClientesThread extends Thread {
     public synchronized void login() throws IOException {
         while (true) {
             escrever.println("login:");
+            
             this.nomeCliente = leitor.readLine().toLowerCase().replaceAll(";", "");
 
             if (this.nomeCliente.equalsIgnoreCase("null") || this.nomeCliente.isEmpty()) {
@@ -79,7 +80,7 @@ public class GerenciadorDeClientesThread extends Thread {
                 escrever.println("login: true");
                 escrever.println(this.nomeCliente + " está online");
                 clientes.put(this.nomeCliente, this);                
-                    listarUsuarios(this.nomeCliente);
+                listarUsuarios(this.nomeCliente);
                 break;
             }
         }
@@ -102,6 +103,7 @@ public class GerenciadorDeClientesThread extends Thread {
         //Manda para a area de texto de usuarios
         for (String x : clientes.keySet()) {
             GerenciadorDeClientesThread cliente = clientes.get(x);
+            //lista os usuários
             cliente.getEscrever().println("lista_usuarios:");
             cliente.getEscrever().println(strCliente.toString());
         }
@@ -129,14 +131,20 @@ public class GerenciadorDeClientesThread extends Thread {
             //Envia pra uma lista de usuário feita pelo usuário OBS:talvez vire um método
             for (String n : arrayNomes) {
                 GerenciadorDeClientesThread destinatarios = clientes.get(n);
-                destinatarios.getEscrever().println(this.nomeCliente + " disse" + " : " + array[1]);
+                destinatarios.getEscrever().println(this.nomeCliente + ":" + array[1]);                
+                escrever.println("transmitir:" + this.nomeCliente + ":" + nomeCliente +  mensagem);
+                
             }
             escrever.println("enviando para " + Arrays.toString(arrayNomes) + ".");
         } else if (array[0].contains("*")) {
             //mensagem anviada para todos
             for (String n : clientes.keySet()) {
                 GerenciadorDeClientesThread destinatarios = clientes.get(n);
-                destinatarios.getEscrever().println(this.nomeCliente + " disse" + " : " + array[1]);
+                //falando como servidor
+                System.out.println("transmitir:*"+":" + array[1]);
+                //falando com o frame
+                destinatarios.getEscrever().println(this.nomeCliente+" disse para todos: " + array[1]);
+                //escrever.println("transmitir:*"+":" + array[1] /*mensagem*/);
             }
 
         } else {                
@@ -146,8 +154,12 @@ public class GerenciadorDeClientesThread extends Thread {
             if (destinatario == null) {
                 escrever.println("Cliente não existe");
             } else {
-                escrever.println("enviando para: " + destinatario.nomeCliente + ":" + array[1]);
-                destinatario.getEscrever().println(this.nomeCliente + " disse"/*+ destinatario.getNomeCliente() */ + " : " + array[1]);
+                //falando com o servidor
+                System.out.println("transmitir:"+this.nomeCliente+ ":" + destinatario.nomeCliente + ":" + array[1]);
+                //falando com o terminal
+                escrever.println(this.nomeCliente+ " disse para " + destinatario.nomeCliente + ": " + array[1]);
+                //falando com o frame
+                destinatario.getEscrever().println(this.nomeCliente+ " disse para " + destinatario.getNomeCliente() + ":" + array[1]);
             }
 //            }
         }

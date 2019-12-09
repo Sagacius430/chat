@@ -23,7 +23,7 @@ public class ClienteFrame extends javax.swing.JFrame {
     public ClienteFrame() {
         initComponents();
         setVisible(true);
-        String[] usuarios = new String[]{"Lincoln", "Carlos"};
+        String[] usuarios = new String[]{};
         prencherListaUsuarios(usuarios);
     }
 
@@ -31,15 +31,13 @@ public class ClienteFrame extends javax.swing.JFrame {
     private void prencherListaUsuarios(String[] usuarios) {
         DefaultListModel modelo = new DefaultListModel();
         listaUsuarios.setModel(modelo);
-        for (String usuario : usuarios) {
-            
+        for (String usuario : usuarios) {            
                 modelo.addElement(usuario);            
         }
     }
 
 //    Coisas a fazer:
 //    *Enviar msg para grupo <-- "tratado"(aguardando o anterior)
-//    *Atualizar a lista de usuário asim que um usuário sair    
     private void iniciarEscritor() {
         //Escrevendo para o servidor
         //Esperando digitação           
@@ -491,7 +489,7 @@ public class ClienteFrame extends javax.swing.JFrame {
                 } else if (mensagem.equals("login: false")) {
                     JOptionPane.showMessageDialog(ClienteFrame.this, "Digite um nome para logar no chat.");
                 } else if (mensagem.equals("login: true")) {
-                    nomeLogin.setText(leitor.readLine()); //setar o nome de login aqui                    
+                    nomeLogin.setText(leitor.readLine()); //setar o nome de login aqui e joga na tela                   
                     atualizarListaUsuarios();
                 } else {
                     receberTexto.append(mensagem);
